@@ -2,9 +2,7 @@
 using System.Net;
 using System.Web.Mvc;
 using _02_Services.ClientesServices;
-using _04_Data.Data;
-
-
+using _04_Data.Dtos;
 
 namespace _00_Mvc.Controllers
 {
@@ -12,22 +10,16 @@ namespace _00_Mvc.Controllers
     {
         //private NorthWindTuneadoDbContext db = new NorthWindTuneadoDbContext();
 
-
-
         // GET: Clientes
         public ActionResult Index(int? id)
         {
-            IList<Cliente> clientes = null;
+            IList<ClienteDto> clienteDtos = null;
             ClientesService service = null;
             service = new ClientesService();
-            clientes = service.List(id);
+            clienteDtos = service.List(id);
 
-
-
-            return View(clientes);
+            return View(clienteDtos);
         }
-
-
 
         // GET: Clientes/Details/5
         public ActionResult Details(int? id)
@@ -38,42 +30,38 @@ namespace _00_Mvc.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-
-
-            Cliente cliente = null;
+            ClienteDto clienteDto = null;
             ClientesService service = null;
             service = new ClientesService();
-            cliente = service.Detail(id.Value);
-            if (cliente == null)
+            clienteDto = service.Detail(id.Value);
+            if (clienteDto == null)
             {
                 return HttpNotFound();
             }
-            return View(cliente);
+            return View(clienteDto);
             //hasta aquí
         }
-
-
 
         // GET: Clientes/Create
         public ActionResult Create()
         {
+            //ClienteDto clienteDto = new ClienteDto();
+            //return View(clienteDto);
             return View();
         }
-
-
 
         // POST: Clientes/Create
         // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que quiere enlazarse. Para obtener 
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Cliente cliente)
+        public ActionResult Create(ClienteDto clienteDto)
         {
             if (ModelState.IsValid)
             {
                 ClientesService service = new ClientesService();
                 bool ok = false;
-                ok = service.Create(cliente);
+                ok = service.Create(clienteDto);
                 if (ok == true)
                 {
                     //Si esto sucede, entonces llama al método "Index"
@@ -81,10 +69,8 @@ namespace _00_Mvc.Controllers
                 }
             }
             ViewBag.Message = "Las Cagao";
-            return View(cliente);
+            return View(clienteDto);
         }
-
-
 
         // GET: Clientes/Edit/5
         public ActionResult Edit(int? id)
@@ -93,30 +79,15 @@ namespace _00_Mvc.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-
-
-            Cliente cliente = null;
-
-
-
+            ClienteDto clienteDto = null;
             ClientesService service = null;
             service = new ClientesService();
-
-
-
-            cliente = service.Detail(id.Value);
-
-
-
-            if (cliente == null)
+            clienteDto = service.Detail(id.Value);
+            if (clienteDto == null)
             {
                 return HttpNotFound();
             }
-
-
-
-            return View(cliente);
+            return View(clienteDto);
         }
 
 
@@ -126,20 +97,15 @@ namespace _00_Mvc.Controllers
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Cliente cliente)
+        public ActionResult Edit(ClienteDto clienteDto)
         {
             if (ModelState.IsValid)
             {
                 ClientesService service = new ClientesService();
                 bool ok = false;
+                ClienteDto buscadaDto = service.Detail(clienteDto.CustomerID);
 
-
-
-                Cliente buscada = service.Detail(cliente.CustomerID);
-
-
-
-                ok = service.Edit(cliente);
+                ok = service.Edit(clienteDto);
                 if (ok == true)
                 {
                     //Si esto sucede, entonces llama al método "Index"
@@ -147,10 +113,8 @@ namespace _00_Mvc.Controllers
                 }
             }
             ViewBag.Message = "Las Cagao";
-            return View(cliente);
+            return View(clienteDto);
         }
-
-
 
         // GET: Clientes/Delete/5
         public ActionResult Delete(int? id)
@@ -159,27 +123,17 @@ namespace _00_Mvc.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Cliente cliente = null;
-
-
-
+            ClienteDto clienteDto = null;
             ClientesService service = null;
             service = new ClientesService();
+            clienteDto = service.Detail(id.Value);
 
-
-
-            cliente = service.Detail(id.Value);
-
-
-
-            if (cliente == null)
+            if (clienteDto == null)
             {
                 return HttpNotFound();
             }
-            return View(cliente);
+            return View(clienteDto);
         }
-
-
 
         // POST: Clientes/Delete/5
         //A pesar de que el método se llama "DeleteConfirmed"
@@ -189,26 +143,13 @@ namespace _00_Mvc.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-
-
-
-            Cliente cliente = null;
-
-
-
+            ClienteDto clienteDto = null;
             ClientesService service = null;
             service = new ClientesService();
-
-
-
-            cliente = service.Detail(id);
-
-
+            clienteDto = service.Detail(id);
 
             bool ok = false;
-            ok = service.Delete(cliente);
-
-
+            ok = service.Delete(clienteDto);
 
             return RedirectToAction("Index");
         }
@@ -220,9 +161,6 @@ namespace _00_Mvc.Controllers
             //CategoriasService service = null;
             //service = new CategoriasService();
             //ok = service.Dispose(disposing);
-
-
-
             //base.Dispose(disposing);
         }
     }

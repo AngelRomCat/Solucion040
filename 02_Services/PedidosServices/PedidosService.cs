@@ -186,7 +186,8 @@ namespace _02_Services.PedidosServices
             Pedido pedido = new Pedido();
             //Rellenamos los 3 campos IMPRESCINDIBLES de el nuevo objeto Pedido pedido 
             //Con el id del primer elemento de cada una de las tres listas
-            pedido.CustomerID = viewModel.clientes.FirstOrDefault().CustomerID;
+            //pedido.CustomerID = viewModel.clientes.FirstOrDefault().CustomerID;
+            pedido.CustomerID = viewModel.clienteDtos.FirstOrDefault().CustomerID;
             pedido.EmployeeID = viewModel.empleados.FirstOrDefault().EmployeeID;
             pedido.shipperID = viewModel.navieras.FirstOrDefault().shipperID;
 
@@ -199,7 +200,8 @@ namespace _02_Services.PedidosServices
         {
             ClientesService clientesService = null;
             clientesService = new ClientesService();
-            viewModel.clientes = clientesService.List(null);
+            //viewModel.clientes = clientesService.List(null);
+            viewModel.clienteDtos = clientesService.List(null);
             EmpleadosService empleadosService = null;
             empleadosService = new EmpleadosService();
             viewModel.empleados = empleadosService.List(null,null);

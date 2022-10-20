@@ -1,4 +1,5 @@
 ﻿using _04_Data.Data;
+using _04_Data.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,8 @@ namespace _02_Services.ClientesServices
                 _db = new NorthWindTuneadoDbContext();
             }
         }
-
         //Index
-        public IList<Cliente> List(int? id)
+        public IList<ClienteDto> List(int? id)
         {
             IList<Cliente> clientes = null;
             if (id == null || id < 1)
@@ -31,26 +31,38 @@ namespace _02_Services.ClientesServices
                                 .ToList();
             }
 
-            return clientes;
+            IList<ClienteDto> clienteDtos = new List<ClienteDto>();
+            foreach (var cliente in clientes)
+            {
+                ClienteDto clienteDto = new ClienteDto(cliente);
+                clienteDtos.Add(clienteDto);
+            }
+
+            return clienteDtos;
         }
-
-
-
         //Details
-        public Cliente Detail(int id)
+        public ClienteDto Detail(int id)
         {
-            Cliente cliente = null;
-            cliente = _db.Cliente
+            Cliente cliente = _db.Cliente
                                 .Where(x => x.CustomerID == id)
                                 .FirstOrDefault();
-            return cliente;
+            ClienteDto clienteDto = new ClienteDto(cliente);
+            return clienteDto;
         }
         //Create
-        public bool Create(Cliente cliente)
+        public bool Create(ClienteDto clienteDto)
         {
             bool ok = false;
             try
             {
+                Cliente cliente = new Cliente();
+                cliente.CustomerName = clienteDto.CustomerName;
+                cliente.Address = clienteDto.Address;
+                cliente.ContactName = clienteDto.ContactName;
+                cliente.City = clienteDto.City;
+                cliente.Country = clienteDto.Country;
+                cliente.PostalCode = clienteDto.PostalCode;
+
                 _db.Cliente.Add(cliente);
                 ok = SaveChanges();
             }
@@ -63,22 +75,22 @@ namespace _02_Services.ClientesServices
             return ok;
         }
         //Edit
-        public bool Edit(Cliente cliente)
+        public bool Edit(ClienteDto clienteDto)
         {
             bool ok = false;
             try
             {
-
-                Cliente buscada = _db.Cliente
-                                    .Where(x => x.CustomerID == cliente.CustomerID)
+                Cliente cliente = _db.Cliente
+                                    .Where(x => x.CustomerID == clienteDto.CustomerID)
                                     .FirstOrDefault();
+                ClienteDto buscada = new ClienteDto(cliente);
 
-                buscada.CustomerName = cliente.CustomerName;
-                buscada.ContactName = cliente.ContactName;
-                buscada.City = cliente.City;
-                buscada.Address = cliente.Address;
-                buscada.PostalCode = cliente.PostalCode;
-                buscada.Country = cliente.Country;
+                buscada.CustomerName = clienteDto.CustomerName;
+                buscada.ContactName = clienteDto.ContactName;
+                buscada.City = clienteDto.City;
+                buscada.Address = clienteDto.Address;
+                buscada.PostalCode = clienteDto.PostalCode;
+                buscada.Country = clienteDto.Country;
 
                 //Guardamos cambios:
                 ok = SaveChanges();
@@ -92,11 +104,12 @@ namespace _02_Services.ClientesServices
             return ok;
         }
         //Delete
-        public bool Delete(Cliente cliente)
+        public bool Delete(ClienteDto clienteDto)
         {
             bool ok = false;
             try
             {
+                Cliente cliente = _db.Cliente.Where(x => x.CustomerID == clienteDto.CustomerID).FirstOrDefault();
                 _db.Cliente.Remove(cliente);
                 //Guardamos cambios:
                 ok = SaveChanges();
